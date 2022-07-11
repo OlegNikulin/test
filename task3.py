@@ -2,6 +2,7 @@ import copy
 
 
 def appearance(intervals):
+    count = 0
     list_lesson = copy.deepcopy(intervals['lesson'])
     list_student = copy.deepcopy(intervals['pupil'])
     list_teacher = copy.deepcopy(intervals['tutor'])
@@ -13,11 +14,20 @@ def appearance(intervals):
         list_teacher[0] = list_lesson[0]
     elif list_teacher[-1] > list_lesson[1]:
         list_teacher[-1] = list_lesson[1]
-    student_even = sum([list_student[i1] for i1 in range(len(list_student)) if i1 % 2 == 0])
-    student_odd = sum([list_student[i1] for i1 in range(len(list_student)) if i1 % 2 != 0])
-    teacher_even = sum([list_teacher[i1] for i1 in range(len(list_teacher)) if i1 % 2 == 0])
-    teacher_odd = sum([list_teacher[i1] for i1 in range(len(list_teacher)) if i1 % 2 != 0])
-    return (teacher_odd - teacher_even) + (student_odd-student_even)
+    student_even = [list_student[i1] for i1 in range(len(list_student)) if i1 % 2 == 0]
+    student_odd = [list_student[i1] for i1 in range(len(list_student)) if i1 % 2 != 0]
+    teacher_even = [list_teacher[i1] for i1 in range(len(list_teacher)) if i1 % 2 == 0]
+    teacher_odd = [list_teacher[i1] for i1 in range(len(list_teacher)) if i1 % 2 != 0]
+    for x, y in zip(student_even, student_odd):
+        for a, b in zip(teacher_even, teacher_odd):
+            if a <= x <= b and a <= y <= b:
+                count += y-x
+            elif x < a <= y <= b:
+                count += y - a
+            elif a <= x <= b < y:
+                count += b - x
+
+    return count
 
 
 tests = [
@@ -44,6 +54,8 @@ tests = [
 if __name__ == '__main__':
 
     for i, test in enumerate(tests):
-        print(appearance(test['data']))
+        test_answer = appearance(test['data'])
+        assert test_answer == test['answer'], f'Error on test case {i}, got {test_answer}, expected {test["answer"]}'
+
 
 
